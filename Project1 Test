@@ -1,0 +1,38 @@
+Several correctly formatted POST requests:
+1.curl -X POST -d '{"text": "this is a #a"}' http://localhost:4001/tweets
+2.curl -X POST -d '{"text": "this is a #b"}' http://localhost:4002/tweets
+
+Several correctly formatted GET requests, including requests that retrieve cached data and requests that require data be fetched from the data server:
+1.curl http://localhost:4001/tweets?q=c
+2.curl http://localhost:4001/tweets?q=a
+3.curl http://localhost:4001/tweets?q=a
+4.curl http://localhost:4002/tweets?q=a
+5.curl http://localhost:4002/tweets?q=a
+
+An incorrectly formatted GET and POST:
+1.curl -X POST -d '{"text": "this is a #a"}' http://localhost:4001/tweets?
+2.curl http://localhost:4002/tweets?q=
+
+A GET/POST with incorrect URI
+1.curl -X POST -d '{"text": "this is a #a"}' http://localhost:4001/twee
+2.curl -X POST -d '{"text": "this is a a"}' http://localhost:4001/tweets
+3.curl -X POST -d '{"text": "this is a a # #"}' http://localhost:4001/tweets
+4.curl http://localhost:4002/tweets?x=a
+
+A PUT request and a DELETE request:
+1.curl -X PUT -d '{"text": "this is a #a"}' http://localhost:4001/tweets
+2.curl -X DELETE -d '{"text": "this is a #a"}' http://localhost:4002/tweets
+
+Test for multithread lock:
+1. A reader comes during writing
+  curl -X POST -d '{"text": "this is a #c"}' http://localhost:4001/tweets
+  curl http://localhost:4002/tweets?q=a
+2. A writer comes during writing
+  curl -X POST -d '{"text": "this is a #d"}' http://localhost:4001/tweets
+  curl -X POST -d '{"text": "this is a #e"}' http://localhost:4002/tweets
+3. A writer comes during reading
+  curl http://localhost:4001/tweets?q=a
+  curl -X POST -d '{"text": "this is a #f"}' http://localhost:4002/tweets
+4. A reader comes during reading
+  curl http://localhost:4001/tweets?q=a
+  curl http://localhost:4002/tweets?q=b
