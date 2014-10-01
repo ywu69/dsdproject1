@@ -5,9 +5,7 @@ public class ThreadSafeLock {
 	private int readers;
 	private int writers;
 
-	private static final Logger ds_logger = LogManager.getLogger("DataServer");
-	private static final Logger fe_logger = LogManager
-			.getLogger("FrontEndServer");
+	private static final Logger logger = LogManager.getLogger("DataServer");
 
 	public ThreadSafeLock() {
 		this.readers = 0;
@@ -21,12 +19,10 @@ public class ThreadSafeLock {
 	public synchronized void lockRead() {
 		while (writers > 0) {
 			try {
-				ds_logger.info("A writer is writing, please wait!");
-				fe_logger.info("A writer is writing, please wait!");
+				logger.info("A writer is writing, please wait!");
 				this.wait();
 			} catch (InterruptedException e) {
-				ds_logger.debug(e.getMessage(), e);
-				fe_logger.debug(e.getMessage(), e);
+				logger.debug(e.getMessage(), e);
 			}
 		}
 		readers++;
@@ -48,12 +44,10 @@ public class ThreadSafeLock {
 	public synchronized void lockWrite() {
 		while (readers > 0 || writers > 0) {
 			try {
-				ds_logger.info("A writer is writing or a reader is reading, please wait!");
-				fe_logger.info("A writer is writing or a reader is reading, please wait!");
+				logger.info("A writer is writing or a reader is reading, please wait!");
 				this.wait();
 			} catch (InterruptedException e) {
-				ds_logger.debug(e.getMessage(), e);
-				fe_logger.debug(e.getMessage(), e);
+				logger.debug(e.getMessage(), e);
 			}
 		}
 		writers++;
